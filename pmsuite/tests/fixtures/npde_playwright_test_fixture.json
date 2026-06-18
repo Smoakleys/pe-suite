@@ -1,0 +1,1253 @@
+{
+  "project": {
+    "id": "PW-TEST",
+    "name": "Playwright Test Fixture",
+    "timezone": "America/Chicago",
+    "created_at": "2025-06-01T12:00:00-05:00",
+    "updated_at": "2025-06-01T12:00:00-05:00",
+    "last_export": null,
+    "history": []
+  },
+  "settings": {
+    "holidays": {
+      "MLA": [
+        {
+          "date": "2026-01-01",
+          "name": "Tahun Baharu",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-01",
+          "name": "Hari Thaipusam; Hari Wilayah Persekutuan",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-02",
+          "name": "Cuti Hari Thaipusam; Cuti Hari Wilayah Persekutuan",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-17",
+          "name": "Tahun Baharu Cina",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-18",
+          "name": "Tahun Baharu Cina (Hari Kedua)",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-03-07",
+          "name": "Hari Nuzul Al-Quran",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-03-21",
+          "name": "Hari Raya Puasa",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-03-22",
+          "name": "Hari Raya Puasa (Hari Kedua)",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-03-23",
+          "name": "Cuti Hari Raya Puasa (Hari Kedua)",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-01",
+          "name": "Hari Pekerja",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-27",
+          "name": "Hari Raya Qurban",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-31",
+          "name": "Hari Wesak",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-06-01",
+          "name": "Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-06-02",
+          "name": "Cuti Hari Wesak",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-06-17",
+          "name": "Awal Muharam",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-08-25",
+          "name": "Hari Keputeraan Nabi Muhammad S.A.W.",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-08-31",
+          "name": "Hari Kebangsaan",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-16",
+          "name": "Hari Malaysia",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-08",
+          "name": "Hari Deepavali",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-09",
+          "name": "Cuti Hari Deepavali",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-12-25",
+          "name": "Hari Krismas",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-01",
+          "name": "Tahun Baharu",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-22",
+          "name": "Hari Thaipusam",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-01",
+          "name": "Hari Wilayah Persekutuan",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-06",
+          "name": "Tahun Baharu Cina (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-07",
+          "name": "Tahun Baharu Cina (Hari Kedua) (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-08",
+          "name": "Cuti Tahun Baharu Cina (Hari Kedua) (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-24",
+          "name": "Hari Nuzul Al-Quran (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-03-09",
+          "name": "Hari Raya Puasa (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-03-10",
+          "name": "Hari Raya Puasa (Hari Kedua) (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-01",
+          "name": "Hari Pekerja",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-16",
+          "name": "Hari Raya Qurban (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-17",
+          "name": "Cuti Hari Raya Qurban (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-20",
+          "name": "Hari Wesak (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-06-06",
+          "name": "Awal Muharam (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-06-07",
+          "name": "Hari Keputeraan Rasmi Seri Paduka Baginda Yang di-Pertuan Agong",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-08-14",
+          "name": "Hari Keputeraan Nabi Muhammad S.A.W. (anggaran)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-08-31",
+          "name": "Hari Kebangsaan",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-09-16",
+          "name": "Hari Malaysia",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-27",
+          "name": "Hari Deepavali",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-25",
+          "name": "Hari Krismas",
+          "source": "seeded"
+        }
+      ],
+      "TAI": [
+        {
+          "date": "2026-01-01",
+          "name": "中華民國開國紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-15",
+          "name": "農曆除夕",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-16",
+          "name": "農曆除夕",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-17",
+          "name": "春節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-18",
+          "name": "春節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-19",
+          "name": "春節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-20",
+          "name": "農曆除夕（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-27",
+          "name": "和平紀念日（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-28",
+          "name": "和平紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-04-03",
+          "name": "兒童節（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-04-04",
+          "name": "兒童節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-04-05",
+          "name": "民族掃墓節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-04-06",
+          "name": "民族掃墓節（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-01",
+          "name": "勞動節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-06-19",
+          "name": "端午節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-25",
+          "name": "中秋節",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-28",
+          "name": "孔子誕辰紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-09",
+          "name": "國慶日（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-10",
+          "name": "國慶日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-25",
+          "name": "臺灣光復暨金門古寧頭大捷紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-26",
+          "name": "臺灣光復暨金門古寧頭大捷紀念日（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-12-25",
+          "name": "行憲紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-01",
+          "name": "中華民國開國紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-04",
+          "name": "農曆除夕",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-05",
+          "name": "農曆除夕",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-06",
+          "name": "春節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-07",
+          "name": "春節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-08",
+          "name": "春節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-09",
+          "name": "春節（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-10",
+          "name": "春節（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-28",
+          "name": "和平紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-03-01",
+          "name": "和平紀念日（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-04-04",
+          "name": "兒童節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-04-05",
+          "name": "民族掃墓節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-04-06",
+          "name": "兒童節（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-04-30",
+          "name": "勞動節（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-01",
+          "name": "勞動節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-06-09",
+          "name": "端午節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-09-15",
+          "name": "中秋節",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-09-28",
+          "name": "孔子誕辰紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-10",
+          "name": "國慶日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-11",
+          "name": "國慶日（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-25",
+          "name": "臺灣光復暨金門古寧頭大捷紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-24",
+          "name": "行憲紀念日（補假）",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-25",
+          "name": "行憲紀念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-31",
+          "name": "中華民國開國紀念日（補假）",
+          "source": "seeded"
+        }
+      ],
+      "FR-BIP": [
+        {
+          "date": "2026-01-01",
+          "name": "Neujahr",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-01-06",
+          "name": "Heilige Drei Könige",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-04-03",
+          "name": "Karfreitag",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-04-06",
+          "name": "Ostermontag",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-01",
+          "name": "Erster Mai",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-14",
+          "name": "Christi Himmelfahrt",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-25",
+          "name": "Pfingstmontag",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-06-04",
+          "name": "Fronleichnam",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-03",
+          "name": "Tag der Deutschen Einheit",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-01",
+          "name": "Allerheiligen",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-12-25",
+          "name": "Erster Weihnachtstag",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-12-26",
+          "name": "Zweiter Weihnachtstag",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-01",
+          "name": "Neujahr",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-06",
+          "name": "Heilige Drei Könige",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-03-26",
+          "name": "Karfreitag",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-03-29",
+          "name": "Ostermontag",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-01",
+          "name": "Erster Mai",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-06",
+          "name": "Christi Himmelfahrt",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-17",
+          "name": "Pfingstmontag",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-27",
+          "name": "Fronleichnam",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-03",
+          "name": "Tag der Deutschen Einheit",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-11-01",
+          "name": "Allerheiligen",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-25",
+          "name": "Erster Weihnachtstag",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-26",
+          "name": "Zweiter Weihnachtstag",
+          "source": "seeded"
+        }
+      ],
+      "AIZU": [
+        {
+          "date": "2026-01-01",
+          "name": "元日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-01-12",
+          "name": "成人の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-11",
+          "name": "建国記念の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-23",
+          "name": "天皇誕生日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-03-20",
+          "name": "春分の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-04-29",
+          "name": "昭和の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-03",
+          "name": "憲法記念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-04",
+          "name": "みどりの日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-05",
+          "name": "こどもの日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-06",
+          "name": "振替休日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-07-20",
+          "name": "海の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-08-11",
+          "name": "山の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-21",
+          "name": "敬老の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-22",
+          "name": "国民の休日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-23",
+          "name": "秋分の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-12",
+          "name": "スポーツの日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-03",
+          "name": "文化の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-23",
+          "name": "勤労感謝の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-01",
+          "name": "元日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-11",
+          "name": "成人の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-11",
+          "name": "建国記念の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-23",
+          "name": "天皇誕生日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-03-21",
+          "name": "春分の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-03-22",
+          "name": "振替休日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-04-29",
+          "name": "昭和の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-03",
+          "name": "憲法記念日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-04",
+          "name": "みどりの日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-05",
+          "name": "こどもの日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-07-19",
+          "name": "海の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-08-11",
+          "name": "山の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-09-20",
+          "name": "敬老の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-09-23",
+          "name": "秋分の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-11",
+          "name": "スポーツの日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-11-03",
+          "name": "文化の日",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-11-23",
+          "name": "勤労感謝の日",
+          "source": "seeded"
+        }
+      ],
+      "DAL": [
+        {
+          "date": "2026-01-01",
+          "name": "New Year's Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-01-19",
+          "name": "Martin Luther King Jr. Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-16",
+          "name": "Washington's Birthday",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-25",
+          "name": "Memorial Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-06-19",
+          "name": "Juneteenth National Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-07-03",
+          "name": "Independence Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-07-04",
+          "name": "Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-07",
+          "name": "Labor Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-12",
+          "name": "Columbus Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-11",
+          "name": "Veterans Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-26",
+          "name": "Thanksgiving Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-12-25",
+          "name": "Christmas Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-01",
+          "name": "New Year's Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-18",
+          "name": "Martin Luther King Jr. Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-15",
+          "name": "Washington's Birthday",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-31",
+          "name": "Memorial Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-06-18",
+          "name": "Juneteenth National Independence Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-06-19",
+          "name": "Juneteenth National Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-07-04",
+          "name": "Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-07-05",
+          "name": "Independence Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-09-06",
+          "name": "Labor Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-11",
+          "name": "Columbus Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-11-11",
+          "name": "Veterans Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-11-25",
+          "name": "Thanksgiving Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-24",
+          "name": "Christmas Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-25",
+          "name": "Christmas Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-31",
+          "name": "New Year's Day (observed)",
+          "source": "seeded"
+        }
+      ]
+    },
+    "work_weeks": {
+      "MLA": [
+        "SUN",
+        "MON",
+        "TUE",
+        "WED",
+        "THU"
+      ],
+      "TAI": [
+        "SUN",
+        "MON",
+        "TUE",
+        "WED",
+        "THU"
+      ],
+      "FR-BIP": [
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI"
+      ],
+      "AIZU": [
+        "SUN",
+        "MON",
+        "TUE",
+        "WED",
+        "THU"
+      ],
+      "DAL": [
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI"
+      ]
+    },
+    "next_task_id": 15,
+    "output_directory": "output",
+    "keep_local_snapshots": 10,
+    "auto_delay_on_load": true,
+    "last_auto_delay_run": null,
+    "date_axis_start": null,
+    "date_axis_end": null
+  },
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "name": "Program kickoff",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 1,
+      "manual_start_date": "2025-06-02",
+      "baseline_start": "2025-06-02",
+      "baseline_finish": "2025-06-02",
+      "dependencies": [],
+      "parent_id": null,
+      "is_complete": true,
+      "actual_completion_date": "2025-06-02",
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-002",
+      "name": "Mask design",
+      "completion_location": "FR-BIP",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 10,
+      "manual_start_date": null,
+      "baseline_start": "2025-06-03",
+      "baseline_finish": "2025-06-16",
+      "dependencies": [
+        {
+          "id": "TASK-001",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": true,
+      "actual_completion_date": "2025-06-16",
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-003",
+      "name": "Wafer fab",
+      "completion_location": "TAI",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 21,
+      "manual_start_date": null,
+      "baseline_start": "2025-06-17",
+      "baseline_finish": "2025-07-07",
+      "dependencies": [
+        {
+          "id": "TASK-002",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-004",
+      "name": "Assembly",
+      "completion_location": "MLA",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 5,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-014",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-005",
+      "name": "Burn-in (oven)",
+      "completion_location": "AIZU",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 7,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-004",
+          "type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": "TASK-011",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-006",
+      "name": "Production test",
+      "completion_location": "MLA",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 4,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-005",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-007",
+      "name": "Reliability qual",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 5,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-006",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-008",
+      "name": "Datasheet draft",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 3,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-007",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-009",
+      "name": "Customer sample shipment",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 1,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-008",
+          "type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": "TASK-012",
+          "type": "FS",
+          "lag_days": 0
+        },
+        {
+          "id": "TASK-013",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-010",
+      "name": "Program closeout review",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 1,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-009",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-011",
+      "name": "Local Assembly",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 3,
+      "manual_start_date": null,
+      "baseline_start": "2025-07-08",
+      "baseline_finish": "2025-07-10",
+      "dependencies": [
+        {
+          "id": "TASK-003",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": true,
+      "actual_completion_date": "2025-07-10",
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-012",
+      "name": "TID Report",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 1,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-007",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-013",
+      "name": "NDD Report",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 1,
+      "manual_start_date": null,
+      "baseline_start": null,
+      "baseline_finish": null,
+      "dependencies": [
+        {
+          "id": "TASK-007",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-014",
+      "name": "Filler task",
+      "completion_location": "DAL",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 438,
+      "manual_start_date": null,
+      "baseline_start": "2025-07-08",
+      "baseline_finish": "2026-09-18",
+      "dependencies": [
+        {
+          "id": "TASK-003",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    }
+  ]
+}

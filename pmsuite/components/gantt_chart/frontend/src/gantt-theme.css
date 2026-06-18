@@ -1,0 +1,427 @@
+/*
+ * PMSuite Gantt — Industrial Precision Theme
+ *
+ * Overrides Frappe Gantt CSS variables and augments with
+ * status-driven bar colors for NPDE project management.
+ *
+ * Specificity note: Frappe uses .gantt .bar-wrapper .bar (0,3,0),
+ * so all bar fills must match or exceed that specificity.
+ */
+
+/* ------------------------------------------------------------------ */
+/* 1. CSS variable overrides — controls Frappe's own rendering        */
+/* ------------------------------------------------------------------ */
+
+:root {
+  /* Bars — default fill for "planned" tasks */
+  --g-bar-color: #4a86c8;
+  --g-bar-border: #3a6ea5;
+  --g-progress-color: #2a5a8a;
+
+  /* Grid & structure */
+  --g-row-color: #fafbfc;
+  --g-row-border-color: #eef0f2;
+  --g-border-color: #e4e8ec;
+  --g-tick-color: #f0f1f3;
+  --g-tick-color-thick: #e4e8ec;
+  --g-header-background: #ffffff;
+  --g-weekend-highlight-color: #f5f6f8;
+
+  /* Text */
+  --g-text-dark: #1a2332;
+  --g-text-light: #ffffff;
+  --g-text-muted: #6b7a8d;
+
+  /* Arrows — quiet, receding */
+  --g-arrow-color: #b0bcc8;
+
+  /* Today indicator */
+  --g-today-highlight: #1a2332;
+
+  /* Handles */
+  --g-handle-color: #5a9bd5;
+
+  /* Popup */
+  --g-popup-actions: #f0f4f8;
+  --g-actions-background: #f0f4f8;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 2. Container & layout                                              */
+/* ------------------------------------------------------------------ */
+
+.gantt-container {
+  border-radius: 6px;
+  border: 1px solid #e4e8ec;
+  background: #ffffff;
+  overflow: auto;
+  padding-bottom: 14px;
+  font-family: "DM Sans", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", system-ui, sans-serif;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 3. Grid — whisper-weight structural lines                          */
+/* ------------------------------------------------------------------ */
+
+.gantt .grid-row {
+  fill: #fafbfc;
+}
+
+.gantt .grid-row:nth-child(even) {
+  fill: #f5f7f9;
+}
+
+.gantt .row-line {
+  stroke: #edf0f3;
+  stroke-width: 0.5;
+}
+
+.gantt .tick {
+  stroke: #eef0f3;
+  stroke-width: 0.3;
+  stroke-dasharray: none;
+}
+
+.gantt .tick.thick {
+  stroke: #dfe3e8;
+  stroke-width: 0.5;
+}
+
+/* Column hover — barely-there highlight */
+.gantt .grid-column:hover {
+  fill: rgba(74, 134, 200, 0.04);
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 4. Header text                                                     */
+/* ------------------------------------------------------------------ */
+
+.gantt-container .upper-text {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: #1a2332;
+}
+
+.gantt-container .lower-text {
+  font-size: 11px;
+  font-weight: 400;
+  color: #7a8899;
+  letter-spacing: 0.02em;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 5. Bar base — matches Frappe specificity .gantt .bar-wrapper .bar   */
+/* ------------------------------------------------------------------ */
+
+.gantt .bar-wrapper .bar {
+  fill: #4a86c8;
+  stroke: #3a6ea5;
+  stroke-width: 0;
+  rx: 4;
+  ry: 4;
+  transition: filter 0.2s ease, stroke-width 0.15s ease;
+}
+
+/* Hover lift */
+.gantt .bar-wrapper:hover .bar {
+  filter: brightness(1.08) drop-shadow(0 1px 3px rgba(26, 35, 50, 0.18));
+  stroke-width: 0;
+}
+
+/* Bar outline from Frappe (override to remove) */
+.gantt .bar-wrapper .bar {
+  outline: none;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 6. Status colors — the core visual vocabulary                      */
+/* ------------------------------------------------------------------ */
+
+/* Planned (default) — steel blue */
+.gantt .bar-wrapper.planned .bar {
+  fill: #4a86c8;
+  stroke: #3a6ea5;
+}
+
+/* Completed — muted teal-green */
+.gantt .bar-wrapper.completed .bar {
+  fill: #3a9d6e;
+  stroke: #2d8359;
+}
+
+/* Delayed — warm amber */
+.gantt .bar-wrapper.delayed .bar {
+  fill: #d4882c;
+  stroke: #b8721f;
+}
+
+/* Overdue — signal red */
+.gantt .bar-wrapper.overdue .bar {
+  fill: #c9453d;
+  stroke: #a83830;
+}
+
+/* Parent / summary — dark charcoal, thinner bar */
+.gantt .bar-wrapper.parent-task .bar {
+  fill: #3d4f5f;
+  stroke: #2c3a47;
+  rx: 2;
+  ry: 2;
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Critical path — left accent + subtle glow                       */
+/* ------------------------------------------------------------------ */
+
+.gantt .bar-wrapper.critical .bar {
+  stroke: #8b1a1a;
+  stroke-width: 1.5;
+}
+
+/* Critical + planned */
+.gantt .bar-wrapper.critical.planned .bar {
+  fill: #4a86c8;
+  stroke: #8b1a1a;
+  stroke-width: 1.5;
+}
+
+/* Critical + overdue */
+.gantt .bar-wrapper.critical.overdue .bar {
+  fill: #c9453d;
+  stroke: #6b1010;
+  stroke-width: 2;
+}
+
+/* Critical + completed */
+.gantt .bar-wrapper.critical.completed .bar {
+  fill: #3a9d6e;
+  stroke: #8b1a1a;
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+/* Critical + parent */
+.gantt .bar-wrapper.critical.parent-task .bar {
+  fill: #3d4f5f;
+  stroke: #8b1a1a;
+  stroke-width: 1.5;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 8. Selected state — bright outline + soft glow                     */
+/* ------------------------------------------------------------------ */
+
+.gantt .bar-wrapper.selected .bar {
+  stroke: #2563eb;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.3));
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 9. Bar labels — always readable                                    */
+/* ------------------------------------------------------------------ */
+
+.gantt .bar-label {
+  fill: #ffffff;
+  font-family: "DM Sans", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.15);
+  stroke-width: 2px;
+}
+
+/* When label overflows bar (Frappe adds .big class) */
+.gantt .bar-label.big {
+  fill: #1a2332;
+  stroke: rgba(255, 255, 255, 0.8);
+  stroke-width: 3px;
+  font-weight: 500;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 10. Dependency arrows — quiet connectors                           */
+/* ------------------------------------------------------------------ */
+
+.gantt .arrow {
+  fill: none;
+  stroke: #b0bcc8;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.6;
+}
+
+/* Brighten on bar hover */
+.gantt .bar-wrapper:hover ~ .arrow,
+.gantt .bar-wrapper.selected ~ .arrow {
+  opacity: 0.85;
+  stroke: #7a8da0;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 11. Today marker                                                   */
+/* ------------------------------------------------------------------ */
+
+.gantt-container .current-highlight {
+  background: #1a2332;
+  width: 1.5px;
+  opacity: 0.7;
+}
+
+.gantt-container .current-ball-highlight {
+  background: #1a2332;
+}
+
+.gantt-container .current-date-highlight {
+  background: #1a2332;
+  color: #ffffff;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 12. Popup / tooltip — crisp info card                              */
+/* ------------------------------------------------------------------ */
+
+.gantt-container .popup-wrapper {
+  background: #ffffff;
+  border: 1px solid #e4e8ec;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px -4px rgba(26, 35, 50, 0.12),
+    0 2px 6px -1px rgba(26, 35, 50, 0.06);
+  padding: 12px 16px;
+  max-width: 320px;
+  font-family: "DM Sans", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", system-ui, sans-serif;
+}
+
+.gantt-container .popup-wrapper .title {
+  color: #1a2332;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.gantt-container .popup-wrapper .subtitle {
+  color: #1a2332;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.gantt-container .popup-wrapper .details {
+  color: #5a6b7d;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 13. Progress bar (within bars)                                     */
+/* ------------------------------------------------------------------ */
+
+.gantt .bar-progress {
+  fill: rgba(255, 255, 255, 0.25);
+  rx: 4;
+  ry: 4;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 14. Drag handles                                                   */
+/* ------------------------------------------------------------------ */
+
+.gantt .handle {
+  fill: #ffffff;
+  opacity: 0;
+  cursor: ew-resize;
+  transition: opacity 0.2s ease;
+}
+
+.gantt .bar-wrapper:hover .handle {
+  opacity: 0.7;
+}
+
+.gantt .handle.active,
+.gantt .handle.visible {
+  opacity: 1;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 15. Scrollbar                                                      */
+/* ------------------------------------------------------------------ */
+
+.gantt-container::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+.gantt-container::-webkit-scrollbar-track {
+  background: #eef0f3;
+  border-radius: 6px;
+}
+
+.gantt-container::-webkit-scrollbar-thumb {
+  background: #8b9aab;
+  border-radius: 6px;
+  border: 2px solid #eef0f3;
+}
+
+.gantt-container::-webkit-scrollbar-thumb:hover {
+  background: #6b7a8d;
+}
+
+.gantt-container::-webkit-scrollbar-corner {
+  background: #eef0f3;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 16. Side header / view controls                                    */
+/* ------------------------------------------------------------------ */
+
+.gantt-container .side-header * {
+  font-family: "DM Sans", "SF Pro Display", -apple-system, system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #f0f4f8;
+  border-radius: 6px;
+  color: #1a2332;
+}
+
+.gantt-container .side-header *:hover {
+  filter: brightness(96%);
+}
+
+
+/* ------------------------------------------------------------------ */
+/* 17. Search dimming (applied via JS, just make it smooth)           */
+/* ------------------------------------------------------------------ */
+
+.gantt .bar-wrapper {
+  transition: opacity 0.25s ease;
+}

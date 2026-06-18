@@ -1,0 +1,312 @@
+{
+  "project": {
+    "id": "DEMO-SMALL",
+    "name": "Small Demo Project",
+    "timezone": "America/Chicago",
+    "created_at": "2026-05-13T12:00:00-05:00",
+    "updated_at": "2026-05-17T20:17:20.729799-05:00",
+    "last_export": null,
+    "history": []
+  },
+  "settings": {
+    "holidays": {
+      "DAL": [
+        {
+          "date": "2026-01-01",
+          "name": "New Year's Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-01-19",
+          "name": "Martin Luther King Jr. Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-02-16",
+          "name": "Washington's Birthday",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-05-25",
+          "name": "Memorial Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-06-19",
+          "name": "Juneteenth National Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-07-03",
+          "name": "Independence Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-07-04",
+          "name": "Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-09-07",
+          "name": "Labor Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-10-12",
+          "name": "Columbus Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-11",
+          "name": "Veterans Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-11-26",
+          "name": "Thanksgiving Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2026-12-25",
+          "name": "Christmas Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-01",
+          "name": "New Year's Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-01-18",
+          "name": "Martin Luther King Jr. Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-02-15",
+          "name": "Washington's Birthday",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-05-31",
+          "name": "Memorial Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-06-18",
+          "name": "Juneteenth National Independence Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-06-19",
+          "name": "Juneteenth National Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-07-04",
+          "name": "Independence Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-07-05",
+          "name": "Independence Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-09-06",
+          "name": "Labor Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-10-11",
+          "name": "Columbus Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-11-11",
+          "name": "Veterans Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-11-25",
+          "name": "Thanksgiving Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-24",
+          "name": "Christmas Day (observed)",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-25",
+          "name": "Christmas Day",
+          "source": "seeded"
+        },
+        {
+          "date": "2027-12-31",
+          "name": "New Year's Day (observed)",
+          "source": "seeded"
+        }
+      ]
+    },
+    "work_weeks": {
+      "DAL": [
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI"
+      ]
+    },
+    "next_task_id": 8,
+    "output_directory": "output",
+    "keep_local_snapshots": 10,
+    "auto_delay_on_load": true,
+    "last_auto_delay_run": null,
+    "date_axis_start": null,
+    "date_axis_end": null
+  },
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "name": "Kickoff meeting",
+      "completion_location": "DAL",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 1,
+      "manual_start_date": "2026-05-18",
+      "baseline_start": "2026-05-18",
+      "baseline_finish": "2026-05-18",
+      "dependencies": [],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-002",
+      "name": "Order parts",
+      "completion_location": "DAL",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 2,
+      "manual_start_date": null,
+      "baseline_start": "2026-05-19",
+      "baseline_finish": "2026-05-20",
+      "dependencies": [
+        {
+          "id": "TASK-001",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-003",
+      "name": "Receive parts",
+      "completion_location": "DAL",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 3,
+      "manual_start_date": null,
+      "baseline_start": "2026-05-21",
+      "baseline_finish": "2026-05-23",
+      "dependencies": [
+        {
+          "id": "TASK-002",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-004",
+      "name": "Build prototype",
+      "completion_location": "DAL",
+      "calendar_mode": "e_days",
+      "cycle_time_days": null,
+      "manual_start_date": null,
+      "baseline_start": "2026-05-24",
+      "baseline_finish": "2026-05-30",
+      "dependencies": [],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-005",
+      "name": "Assemble unit",
+      "completion_location": "DAL",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 5,
+      "manual_start_date": null,
+      "baseline_start": "2026-05-24",
+      "baseline_finish": "2026-05-28",
+      "dependencies": [
+        {
+          "id": "TASK-003",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": "TASK-004",
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-006",
+      "name": "Calibrate",
+      "completion_location": "DAL",
+      "calendar_mode": "e_days",
+      "cycle_time_days": 2,
+      "manual_start_date": null,
+      "baseline_start": "2026-05-29",
+      "baseline_finish": "2026-05-30",
+      "dependencies": [
+        {
+          "id": "TASK-005",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": "TASK-004",
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    },
+    {
+      "id": "TASK-007",
+      "name": "Report results",
+      "completion_location": "DAL",
+      "calendar_mode": "working_days",
+      "cycle_time_days": 3,
+      "manual_start_date": null,
+      "baseline_start": "2026-06-01",
+      "baseline_finish": "2026-06-03",
+      "dependencies": [
+        {
+          "id": "TASK-006",
+          "type": "FS",
+          "lag_days": 0
+        }
+      ],
+      "parent_id": null,
+      "is_complete": false,
+      "actual_completion_date": null,
+      "delay_days": 0,
+      "delay_log": []
+    }
+  ]
+}

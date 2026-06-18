@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pmsuite-gantt"
+version = "0.1.0"
+description = "JSON-driven Excel Gantt chart builder for semiconductor NPDE workflows"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Frosty-STI" },
+]
+dependencies = [
+    "pydantic>=2.5",
+    "xlsxwriter>=3.1",
+    "holidays>=0.45",
+    "streamlit>=1.30",
+    "python-dateutil>=2.8",
+    "tzdata>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "openpyxl>=3.1",
+]
+test-ui = [
+    "pytest>=7.4",
+    "pytest-playwright>=0.4",
+]
+# pytest-benchmark added back when test_performance.py is implemented
+
+[tool.hatch.build.targets.wheel]
+packages = ["gantt_builder", "ui"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "visual: opt-in visual snapshot tests for Excel output",
+    "playwright: Playwright UI tests requiring Chromium (deselect with '-m \"not playwright\"')",
+]
+addopts = "-ra"

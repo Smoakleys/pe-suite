@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# PE Suite local data (never committed)
+# Hidden fetch store + Playwright profile live under %LOCALAPPDATA%\PESuite,
+# but ignore any stray local copies and databases here too.
+*.db
+*.sqlite
+*.sqlite3
+.cache/
+
+# Generated Excel output from the PMSuite engine
+pmsuite/output/
+output/
+
+# Engine logs
+.logs/
+
+# Local render previews from verify scripts
+scripts/_preview/
+
+# IDE
+.idea/
+.vscode/

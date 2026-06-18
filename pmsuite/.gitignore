@@ -1,0 +1,44 @@
+# user data (never committed)
+projects/
+projects/.backups/
+
+# rotating snapshots that get created when API saves demo projects
+examples/.backups/
+
+# build artifacts (keep the empty directory tracked via .gitkeep)
+output/*
+!output/.gitkeep
+
+# Streamlit local state
+.streamlit/recents.json
+.streamlit/secrets.toml
+
+# logs (always on)
+.logs/
+
+# Playwright test artifacts
+test-results/
+
+# Node.js (Gantt component build tooling)
+node_modules/
+
+# Python build/cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+!components/gantt_chart/frontend/build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

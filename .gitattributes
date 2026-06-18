@@ -1,0 +1,4 @@
+# Normalize line endings so cross-platform diffs stay clean.
+* text=auto eol=lf
+*.png binary
+*.sqlite3 binary
