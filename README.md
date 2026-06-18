@@ -25,8 +25,13 @@ python -m venv .venv
 ## Run the app
 
 ```bash
+# Preferred: module launch with the project venv.
 .venv/Scripts/python.exe -m pesuite.app.main
 ```
+
+Running the file directly also works from any Python — `python pesuite/app/main.py` —
+because the entry point adds the repo root to `sys.path` and re-execs through the
+project `.venv` if the engine dependencies aren't found on the current interpreter.
 
 ## Verify
 
