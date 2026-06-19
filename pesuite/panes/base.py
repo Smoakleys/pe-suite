@@ -1,28 +1,41 @@
-"""Pane base widget: a titled card with a header and a stacked body.
+"""Pane base widget: a titled card with a header, body, and a maximize control.
 
-The body is a QStackedWidget with two pages — an empty-state placeholder and the
-real content — so every pane gets consistent "nothing selected yet" handling. This
-mirrors the mockup's "No tasks — open a project" / "Enable a source filter" states.
+Every pane is a rounded "card" with:
+  - a navy header showing the title, optional header widgets (filters/buttons), and a
+    maximize/restore button on the far right,
+  - a body that is a QStackedWidget with two pages — an empty-state placeholder and the
+    real content — so every pane gets consistent "nothing selected yet" handling.
+
+The maximize button emits `maximizeRequested`; the main window handles popping the pane
+out to a full-window view and back. Subclasses never deal with maximize themselves.
 """
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
     QStackedWidget,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
+
+# Glyphs for the maximize / restore toggle (Segoe UI Symbol renders these on Windows).
+_ICON_MAXIMIZE = "⤢"   # ⤢  diagonal expand
+_ICON_RESTORE = "⤡"    # ⤡  diagonal collapse
 
 
 class Pane(QFrame):
     """A titled card. Subclasses add content via `set_content` and toggle states."""
 
+    maximizeRequested = Signal()
+
     def __init__(self, title: str, header_extra: QWidget | None = None) -> None:
         super().__init__()
+        self.title = title
         self.setObjectName("pane")
         self.setFrameShape(QFrame.NoFrame)
 
@@ -30,23 +43,29 @@ class Pane(QFrame):
         outer.setContentsMargins(0, 0, 0, 0)
         outer.setSpacing(0)
 
-        # Header row: title + optional extra widgets (filters, buttons) on the right.
+        # Header: title | (optional extra widgets) | maximize button.
         header_row = QWidget()
         header_row.setObjectName("paneHeaderRow")
         hl = QHBoxLayout(header_row)
-        hl.setContentsMargins(0, 0, 0, 0)
-        hl.setSpacing(0)
+        hl.setContentsMargins(0, 0, 8, 0)
+        hl.setSpacing(6)
 
         self._title_label = QLabel(title)
         self._title_label.setObjectName("paneHeader")
         hl.addWidget(self._title_label)
+        hl.addStretch(1)
+
         if header_extra is not None:
             header_extra.setStyleSheet("background: transparent;")
-            hl.addStretch(1)
             hl.addWidget(header_extra)
-            # keep the navy bar spanning the full width behind the extra widget
-            self._title_label.setSizePolicy(self._title_label.sizePolicy().horizontalPolicy(),
-                                            self._title_label.sizePolicy().verticalPolicy())
+
+        self._max_btn = QToolButton()
+        self._max_btn.setObjectName("paneTool")
+        self._max_btn.setText(_ICON_MAXIMIZE)
+        self._max_btn.setCursor(Qt.PointingHandCursor)
+        self._max_btn.setToolTip("Maximize this pane")
+        self._max_btn.clicked.connect(self.maximizeRequested)
+        hl.addWidget(self._max_btn)
         outer.addWidget(header_row)
 
         # Body: placeholder page (0) + content page (1).
@@ -56,7 +75,7 @@ class Pane(QFrame):
         self._stack.addWidget(self._placeholder)  # index 0
         body_wrap = QWidget()
         self._body_layout = QVBoxLayout(body_wrap)
-        self._body_layout.setContentsMargins(10, 10, 10, 10)
+        self._body_layout.setContentsMargins(12, 12, 12, 12)
         self._stack.addWidget(body_wrap)  # index 1
         outer.addWidget(self._stack, 1)
 
@@ -69,3 +88,8 @@ class Pane(QFrame):
 
     def show_content(self) -> None:
         self._stack.setCurrentIndex(1)
+
+    def set_maximized(self, maximized: bool) -> None:
+        """Reflect the maximized state on the toggle button (called by the window)."""
+        self._max_btn.setText(_ICON_RESTORE if maximized else _ICON_MAXIMIZE)
+        self._max_btn.setToolTip("Restore this pane" if maximized else "Maximize this pane")

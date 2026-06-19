@@ -25,6 +25,7 @@ class FetchClient(QObject):
         super().__init__(parent)
         self._store = Store(store_path or config.fetch_store_path())
         self._procs: dict[QProcess, str] = {}
+        self._shutting_down = False
 
     # -- reads -----------------------------------------------------------
     def sources(self) -> list[SourceInfo]:
@@ -61,18 +62,25 @@ class FetchClient(QObject):
         proc.start()
 
     def _on_finished(self, proc: QProcess, code: int) -> None:
+        if self._shutting_down:
+            return
         group = self._procs.pop(proc, "")
         if group:
             self.refreshed.emit(group, code == 0)
 
     def _on_error(self, proc: QProcess) -> None:
+        # Killing a process during shutdown fires errorOccurred; ignore it then.
+        if self._shutting_down:
+            return
         group = self._procs.pop(proc, "")
         if group:
             self.refreshed.emit(group, False)
 
     def shutdown(self) -> None:
+        self._shutting_down = True
         for proc in list(self._procs):
             if proc.state() != QProcess.NotRunning:
                 proc.kill()
+                proc.waitForFinished(1500)
         self._procs.clear()
         self._store.close()

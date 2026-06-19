@@ -22,7 +22,10 @@ deliberately; change them deliberately.
 
 The **global project selector** lives in the app top bar (not inside any pane) and
 drives Gantt + Tasks + Priorities together. Updates has its own project + source
-filters; Material Tracking has its own project selector and opens in a separate window.
+filters; Material Tracking has its own project selector. Material Tracking is an
+embedded pane in the right column (Priorities on top, Material below); any pane can be
+maximized to fill the window via its header button (superseding the original
+"separate window" plan).
 
 ---
 
@@ -91,7 +94,9 @@ never disagree.
 - **Refresh:** view-driven, cache-first. Render instantly from cache; refresh the viewed
   source (and its related group) in the background; force-refresh available. No constant
   polling.
-- **Material Tracking:** separate native Qt window, own project selector, reads the store.
+- **Material Tracking:** embedded pane in the right column (below Priorities), own project
+  selector, reads the store. Maximizable to fill the window (revised from the original
+  separate-window plan).
 - **Auth (scraped sources):** start with interactive login via a persistent Playwright
   browser context (saved storage state under `%LOCALAPPDATA%\PESuite`); user logs in once,
   the session persists. No credentials stored by us. Later: env-var credentials behind the
@@ -156,5 +161,9 @@ before any scraping risk enters.
 5. **Fetch service skeleton** — separate process, SQLite store, `Source` contract, one
    trivial source end-to-end.
 6. **Updates pane** — project + source filters, cache-first reads, diff stream.
-7. **Material Tracking window** — separate native Qt window, own selector, view-driven
-   group refresh, first Playwright source (interactive login).
+7. **Material Tracking pane** — embedded in the right column below Priorities, own
+   selector, view-driven group refresh, first Playwright source (interactive login).
+   (Revised from a separate window; every pane is now maximizable instead.)
+
+> For day-to-day "how do I add X" instructions, see **ARCHITECTURE.md** (the live
+> contributor guide) — it supersedes this section once you're building.

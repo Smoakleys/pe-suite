@@ -1,9 +1,9 @@
-"""Material Tracking — a separate top-level window with its OWN project selector.
+"""Material Tracking pane: fetched material/PO status, with its OWN project selector.
 
-Per the design, Material Tracking lives in its own window (it hosts dense tables and a
-lot of fetched/scraped data). It does not use the global selector — the user picks a
-project here. Reads are cache-first from the hidden store; opening the window (and the
-Refresh button) triggers a view-driven refresh of just the "material" source group.
+Lives below Priorities in the right column. Independent of the global selector — the
+user picks a project here. Reads are cache-first from the hidden store; the pane runs a
+view-driven refresh of just the "material" source group when it first appears, and the
+Refresh button forces one on demand.
 """
 
 from __future__ import annotations
@@ -14,76 +14,68 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QHeaderView,
     QLabel,
-    QMainWindow,
     QPushButton,
-    QStackedWidget,
     QTableWidget,
     QTableWidgetItem,
-    QVBoxLayout,
     QWidget,
 )
 
-from pesuite.core import discover_projects
+from pesuite.core import ProjectRef
 from pesuite.fetch_client import FetchClient
+from .base import Pane
 
 _COLUMNS = ["PO", "Item", "Status", "Qty", "ETA", "Supplier"]
+_STATUS_COLOR = {
+    "Delivered": "#2f9e54",
+    "In Transit": "#2f8f7d",
+    "Ordered": "#d98324",
+    "Delayed": "#d2453d",
+}
 
 
-class MaterialTrackingWindow(QMainWindow):
-    def __init__(self, projects_dir, fetch: FetchClient, parent=None) -> None:
-        super().__init__(parent)
-        self.setWindowTitle("PE Suite — Material Tracking")
-        self.resize(940, 620)
-        self._projects_dir = projects_dir
+class MaterialPane(Pane):
+    def __init__(self, fetch: FetchClient) -> None:
         self._fetch = fetch
         self._refreshed_once = False
 
-        central = QWidget()
-        layout = QVBoxLayout(central)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(12)
-
-        bar = QHBoxLayout()
-        bar.addWidget(QLabel("Project"))
+        extra = QWidget()
+        hl = QHBoxLayout(extra)
+        hl.setContentsMargins(0, 4, 0, 4)
+        hl.setSpacing(6)
         self._selector = QComboBox()
-        self._selector.setMinimumWidth(300)
-        bar.addWidget(self._selector)
-        bar.addStretch(1)
+        self._selector.setMinimumWidth(180)
         self._refresh_btn = QPushButton("Refresh")
-        bar.addWidget(self._refresh_btn)
-        layout.addLayout(bar)
+        self._refresh_btn.setObjectName("ghost")
+        hl.addWidget(QLabel("Project"))
+        hl.addWidget(self._selector)
+        hl.addWidget(self._refresh_btn)
 
-        self._stack = QStackedWidget()
-        self._placeholder = QLabel("No material records yet — click Refresh to fetch.",
-                                   alignment=Qt.AlignCenter)
-        self._placeholder.setObjectName("placeholder")
-        self._stack.addWidget(self._placeholder)  # 0
+        super().__init__("Material Tracking", header_extra=extra)
 
         self._table = QTableWidget(0, len(_COLUMNS))
         self._table.setHorizontalHeaderLabels(_COLUMNS)
         self._table.verticalHeader().setVisible(False)
         self._table.setEditTriggers(QTableWidget.NoEditTriggers)
         self._table.setSelectionBehavior(QTableWidget.SelectRows)
+        self._table.setShowGrid(False)
+        self._table.setAlternatingRowColors(True)
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self._stack.addWidget(self._table)  # 1
-        layout.addWidget(self._stack, 1)
-
-        self.setCentralWidget(central)
+        self.set_content(self._table)
+        self.show_placeholder("No material records yet — click Refresh to fetch.")
 
         self._selector.currentIndexChanged.connect(self._on_project_changed)
         self._refresh_btn.clicked.connect(self._do_refresh)
         self._fetch.refreshStarted.connect(self._on_refresh_started)
         self._fetch.refreshed.connect(self._on_refreshed)
 
-        self.refresh_projects()
         self._reload()
 
-    # -- projects --------------------------------------------------------
-    def refresh_projects(self) -> None:
+    # -- public ----------------------------------------------------------
+    def set_projects(self, refs: list[ProjectRef]) -> None:
         current = self._selector.currentData()
         self._selector.blockSignals(True)
         self._selector.clear()
-        for ref in discover_projects(self._projects_dir):
+        for ref in refs:
             self._selector.addItem(ref.name, userData=ref.id)
         idx = self._selector.findData(current)
         if idx >= 0:
@@ -123,14 +115,15 @@ class MaterialTrackingWindow(QMainWindow):
         records = self._fetch.materials(project_id=self._current_project_id())
         self._table.setRowCount(0)
         if not records:
-            self._stack.setCurrentIndex(0)
+            self.show_placeholder("No material records for this project yet.")
             return
         for rec in records:
             data = rec.get("data", {}) or {}
+            status = str(data.get("status", ""))
             values = [
                 str(data.get("po", rec.get("rec_key", ""))),
                 rec.get("title", ""),
-                str(data.get("status", "")),
+                status,
                 str(data.get("qty", "")),
                 str(data.get("eta", "")),
                 str(data.get("supplier", "")),
@@ -138,5 +131,9 @@ class MaterialTrackingWindow(QMainWindow):
             row = self._table.rowCount()
             self._table.insertRow(row)
             for col, val in enumerate(values):
-                self._table.setItem(row, col, QTableWidgetItem(val))
-        self._stack.setCurrentIndex(1)
+                item = QTableWidgetItem(val)
+                if col == 2 and status in _STATUS_COLOR:
+                    from PySide6.QtGui import QColor
+                    item.setForeground(QColor(_STATUS_COLOR[status]))
+                self._table.setItem(row, col, item)
+        self.show_content()

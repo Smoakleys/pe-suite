@@ -79,12 +79,19 @@ def main() -> int:
     app.processEvents()
     check("reload() re-derived the project", state.current is not None and state.current is not before)
 
-    # Material Tracking opens as its own window.
-    win.open_material_tracking()
+    # Material Tracking is now an embedded pane in the right column with its own selector.
+    check("Material pane present with own selector", win.material_pane._selector.count() >= 2)
+
+    # Every pane can be maximized to its own window and restored.
+    win.selector.setCurrentIndex(target)
     app.processEvents()
-    mw = win._material_window
-    check("Material Tracking window created", mw is not None)
-    check("Material window has its own selector", mw is not None and mw._selector.count() >= 2)
+    win._toggle_maximize(win.gantt_pane)
+    app.processEvents()
+    maximized = win._maximized is not None and win._maximized[0] is win.gantt_pane
+    check("pane maximizes into its own window", maximized and win._max_window is not None)
+    win._toggle_maximize(win.gantt_pane)
+    app.processEvents()
+    check("pane restores back into the grid", win._maximized is None)
 
     print()
     failed = [label for label, ok in checks if not ok]

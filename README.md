@@ -3,7 +3,9 @@
 A local desktop suite for product engineers — schedules, tasks, priorities, updates,
 and material tracking in one place. Built to be expanded over time.
 
-See **[DESIGN.md](DESIGN.md)** for the architecture and the phased implementation plan.
+**Adding a feature or a data source?** Start with **[ARCHITECTURE.md](ARCHITECTURE.md)** —
+the live contributor guide with copy-pasteable recipes. It must be updated with every
+change. See **[DESIGN.md](DESIGN.md)** for the original design rationale and phase plan.
 
 ## Layout
 

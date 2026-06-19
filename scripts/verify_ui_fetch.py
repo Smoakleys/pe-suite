@@ -23,7 +23,7 @@ from PySide6.QtWidgets import QApplication  # noqa: E402
 from pesuite import config  # noqa: E402
 from pesuite.core import discover_projects  # noqa: E402
 from pesuite.fetch_client import FetchClient  # noqa: E402
-from pesuite.app.material_window import MaterialTrackingWindow  # noqa: E402
+from pesuite.panes.material_pane import MaterialPane  # noqa: E402
 from pesuite.panes.updates_pane import UpdatesPane  # noqa: E402
 from fetch_service.service import refresh_group  # noqa: E402
 from fetch_service.source import SourceRegistry  # noqa: E402
@@ -63,8 +63,9 @@ def main() -> int:
     app.processEvents()
     check("Updates filter by project works", updates._list.count() > 0)
 
-    # Material window renders the table for a project.
-    mat = MaterialTrackingWindow(config.projects_dir(), fetch)
+    # Material pane renders the table for a project.
+    mat = MaterialPane(fetch)
+    mat.set_projects(refs)
     midx = mat._selector.findData("DEMO-NPDE")
     mat._selector.setCurrentIndex(midx if midx >= 0 else 0)
     app.processEvents()

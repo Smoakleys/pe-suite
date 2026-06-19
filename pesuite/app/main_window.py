@@ -1,47 +1,65 @@
-"""The PE Suite main window: top bar, four-pane layout, global selector, file-watch.
+"""The PE Suite main window: top bar, pane grid, global selector, file-watch.
 
-Layout mirrors the mockup:
+Layout:
 
-    +-----------------------------------------------------------+
-    |  PE Suite        Project [ ... v]   [Material Tracking]   |  top bar
-    +----------------------------+------------------------------+
-    |  Gantt Chart               |  Priorities                 |
-    +----------------------------+------------------------------+
-    |  Tasks                     |  Updates                    |
-    +----------------------------+------------------------------+
+    +-------------------------------------------------------------+
+    |  PE Suite        Project [ ... v]                           |  top bar
+    +----------------------------+--------------------------------+
+    |                            |  Priorities                    |
+    |  Gantt Chart               +--------------------------------+
+    |                            |  Material Tracking             |
+    +-------------+--------------+--------------------------------+
+    |  Tasks      |  Updates                                      |
+    +-------------+-----------------------------------------------+
 
 The global selector lives in the TOP BAR (app-level), not in any pane, and drives
 Gantt + Tasks + Priorities through AppState. Updates and Material Tracking keep their
-own independent filters. A QFileSystemWatcher auto-reloads on edits to projects/.
+own independent filters/selectors. Every pane can be maximized to fill the window via
+its header button. A QFileSystemWatcher auto-reloads on edits to projects/.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QFileSystemWatcher, Qt, QTimer
 from PySide6.QtWidgets import (
     QComboBox,
     QFrame,
     QHBoxLayout,
     QLabel,
     QMainWindow,
-    QPushButton,
     QSplitter,
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import QFileSystemWatcher
 
 from pesuite import config
 from pesuite.app.editor_launcher import StreamlitEditor
-from pesuite.app.material_window import MaterialTrackingWindow
 from pesuite.app.state import AppState
 from pesuite.core import discover_projects
 from pesuite.fetch_client import FetchClient
-from pesuite.panes import GanttPane, PrioritiesPane, TasksPane, UpdatesPane
+from pesuite.panes import (
+    GanttPane,
+    MaterialPane,
+    PrioritiesPane,
+    TasksPane,
+    UpdatesPane,
+)
 
 _NO_SELECTION = "— Select project —"
+
+
+class _MaximizedWindow(QMainWindow):
+    """Hosts a single pane shown maximized; calls back on close to restore it."""
+
+    def __init__(self, on_close) -> None:
+        super().__init__()
+        self._on_close = on_close
+
+    def closeEvent(self, event) -> None:
+        self._on_close()
+        event.ignore()  # the pane must be reparented back, not destroyed
 
 
 class MainWindow(QMainWindow):
@@ -49,7 +67,10 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.state = state or AppState()
         self._projects_dir = Path(projects_dir or config.projects_dir())
-        self._material_window: MaterialTrackingWindow | None = None
+
+        # Maximize state: (pane, splitter, index) while a pane is popped out.
+        self._maximized: tuple | None = None
+        self._max_window: _MaximizedWindow | None = None
 
         # Services the panes depend on must exist before the panes are built.
         self._fetch = FetchClient(parent=self)
@@ -58,7 +79,7 @@ class MainWindow(QMainWindow):
         self._editor.failed.connect(lambda m: self.statusBar().showMessage(m, 8000))
 
         self.setWindowTitle("PE Suite")
-        self.resize(1400, 900)
+        self.resize(1480, 940)
 
         root = QWidget()
         root_layout = QVBoxLayout(root)
@@ -78,61 +99,104 @@ class MainWindow(QMainWindow):
     def _build_top_bar(self) -> QWidget:
         bar = QFrame()
         bar.setObjectName("topBar")
-        bar.setFixedHeight(52)
+        bar.setFixedHeight(54)
         hl = QHBoxLayout(bar)
-        hl.setContentsMargins(16, 0, 16, 0)
+        hl.setContentsMargins(18, 0, 18, 0)
         hl.setSpacing(10)
 
         title = QLabel("PE Suite")
         title.setObjectName("appTitle")
         hl.addWidget(title)
-        hl.addSpacing(24)
+        hl.addSpacing(26)
 
         lbl = QLabel("Project")
         lbl.setObjectName("topBarLabel")
         hl.addWidget(lbl)
 
         self.selector = QComboBox()
-        self.selector.setMinimumWidth(320)
+        self.selector.setMinimumWidth(340)
         self.selector.currentIndexChanged.connect(self._on_selector_changed)
         hl.addWidget(self.selector)
 
         hl.addStretch(1)
-
-        self.material_button = QPushButton("Material Tracking  ↗")
-        self.material_button.clicked.connect(self.open_material_tracking)
-        hl.addWidget(self.material_button)
         return bar
 
     # -- panes ------------------------------------------------------------
     def _build_panes(self) -> QWidget:
         self.gantt_pane = GanttPane(self.state)
         self.priorities_pane = PrioritiesPane(self.state)
+        self.material_pane = MaterialPane(self._fetch)
         self.tasks_pane = TasksPane(self.state)
         self.updates_pane = UpdatesPane(self._fetch)
 
         self.gantt_pane.launchEditorRequested.connect(self._on_launch_editor)
 
-        top_split = QSplitter(Qt.Horizontal)
-        top_split.addWidget(self.gantt_pane)
-        top_split.addWidget(self.priorities_pane)
-        top_split.setSizes([900, 500])
+        # Right column: Priorities (top) over Material Tracking (bottom).
+        self.right_split = QSplitter(Qt.Vertical)
+        self.right_split.addWidget(self.priorities_pane)
+        self.right_split.addWidget(self.material_pane)
+        self.right_split.setSizes([460, 320])
 
-        bottom_split = QSplitter(Qt.Horizontal)
-        bottom_split.addWidget(self.tasks_pane)
-        bottom_split.addWidget(self.updates_pane)
-        bottom_split.setSizes([700, 700])
+        # Top row: Gantt (left) beside the right column.
+        self.top_split = QSplitter(Qt.Horizontal)
+        self.top_split.addWidget(self.gantt_pane)
+        self.top_split.addWidget(self.right_split)
+        self.top_split.setSizes([980, 480])
 
-        v_split = QSplitter(Qt.Vertical)
-        v_split.addWidget(top_split)
-        v_split.addWidget(bottom_split)
-        v_split.setSizes([560, 320])
+        # Bottom row: Tasks beside Updates.
+        self.bottom_split = QSplitter(Qt.Horizontal)
+        self.bottom_split.addWidget(self.tasks_pane)
+        self.bottom_split.addWidget(self.updates_pane)
+        self.bottom_split.setSizes([720, 720])
+
+        self.main_split = QSplitter(Qt.Vertical)
+        self.main_split.addWidget(self.top_split)
+        self.main_split.addWidget(self.bottom_split)
+        self.main_split.setSizes([600, 320])
+
+        # Wire every pane's maximize button.
+        for pane in (self.gantt_pane, self.priorities_pane, self.material_pane,
+                     self.tasks_pane, self.updates_pane):
+            pane.maximizeRequested.connect(lambda p=pane: self._toggle_maximize(p))
 
         container = QWidget()
         cl = QVBoxLayout(container)
-        cl.setContentsMargins(8, 8, 8, 8)
-        cl.addWidget(v_split)
+        cl.setContentsMargins(10, 10, 10, 10)
+        cl.addWidget(self.main_split)
         return container
+
+    # -- maximize / restore ----------------------------------------------
+    def _toggle_maximize(self, pane) -> None:
+        if self._maximized is not None and self._maximized[0] is pane:
+            self._restore_pane()
+            return
+        if self._maximized is not None:
+            self._restore_pane()
+
+        splitter = pane.parentWidget()
+        # parentWidget() of a splitter child is the QSplitter itself.
+        index = splitter.indexOf(pane) if isinstance(splitter, QSplitter) else -1
+        if index < 0:
+            return
+        self._maximized = (pane, splitter, index)
+
+        self._max_window = _MaximizedWindow(self._restore_pane)
+        self._max_window.setWindowTitle(f"PE Suite — {pane.title}")
+        self._max_window.setCentralWidget(pane)  # reparents the pane
+        pane.set_maximized(True)
+        self._max_window.resize(self.size())
+        self._max_window.showMaximized()
+
+    def _restore_pane(self) -> None:
+        if self._maximized is None:
+            return
+        pane, splitter, index = self._maximized
+        splitter.insertWidget(index, pane)  # reparents back into the grid
+        pane.set_maximized(False)
+        self._maximized = None
+        if self._max_window is not None:
+            win, self._max_window = self._max_window, None
+            win.deleteLater()
 
     # -- project list / selection ----------------------------------------
     def refresh_project_list(self) -> None:
@@ -152,8 +216,7 @@ class MainWindow(QMainWindow):
         self.selector.blockSignals(False)
 
         self.updates_pane.set_projects(refs)
-        if self._material_window is not None:
-            self._material_window.refresh_projects()
+        self.material_pane.set_projects(refs)
 
     def _on_selector_changed(self, _index: int) -> None:
         path = self.selector.currentData()
@@ -164,8 +227,8 @@ class MainWindow(QMainWindow):
         self._rewatch_current_file()
 
     def _on_project_changed(self, loaded) -> None:
-        name = loaded.project.project.name if loaded else "PE Suite"
-        self.setWindowTitle(f"PE Suite — {name}" if loaded else "PE Suite")
+        name = loaded.project.project.name if loaded else None
+        self.setWindowTitle(f"PE Suite — {name}" if name else "PE Suite")
 
     def _on_load_failed(self, path, message: str) -> None:
         self.statusBar().showMessage(f"Failed to load {Path(path).name}: {message}", 8000)
@@ -193,8 +256,6 @@ class MainWindow(QMainWindow):
             self._watcher.addPath(str(p))
 
     def _on_dir_changed(self, _path: str) -> None:
-        # Projects added/removed: rebuild the list. Re-arm current file in case an
-        # atomic save replaced it. Then reload the current project (debounced).
         self.refresh_project_list()
         self._rewatch_current_file()
         self._reload_timer.start()
@@ -207,14 +268,6 @@ class MainWindow(QMainWindow):
         self._rewatch_current_file()  # atomic save may have dropped the watch
 
     # -- actions ----------------------------------------------------------
-    def open_material_tracking(self) -> None:
-        if self._material_window is None:
-            self._material_window = MaterialTrackingWindow(
-                self._projects_dir, self._fetch, parent=self)
-        self._material_window.show()
-        self._material_window.raise_()
-        self._material_window.activateWindow()
-
     def _on_launch_editor(self) -> None:
         if self.state.current_path is None:
             self.statusBar().showMessage("Select a project first.", 4000)
@@ -222,6 +275,8 @@ class MainWindow(QMainWindow):
         self._editor.launch(self.state.current_path)
 
     def closeEvent(self, event) -> None:
+        if self._maximized is not None:
+            self._restore_pane()
         self._editor.shutdown()
         self._fetch.shutdown()
         super().closeEvent(event)
