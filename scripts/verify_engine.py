@@ -87,12 +87,41 @@ def main() -> int:
             failures += 1
             print(f"\n!! FAILED on {json_path.name}: {type(exc).__name__}: {exc}")
 
+    # Behavioral check: a parent's status is the worst (least on-time) status among
+    # its children — so a parent is only COMPLETE when every child is complete.
+    print(f"\n{'=' * 78}")
+    print("PARENT-STATUS ROLLUP CHECK")
+    failures += _check_parent_rollup()
+
     print(f"\n{'=' * 78}")
     if failures:
-        print(f"RESULT: {failures} project(s) failed.")
+        print(f"RESULT: {failures} failure(s).")
         return 1
-    print("RESULT: all projects loaded and derived successfully.")
+    print("RESULT: all projects loaded, derived, and parent-status rollup verified.")
     return 0
+
+
+def _check_parent_rollup() -> int:
+    from pesuite.core.views import _STATUS_SEVERITY  # noqa: E402
+
+    bad = 0
+    for json_path in sorted(EXAMPLES.glob("*.json")):
+        loaded = load_project(json_path)
+        rows = {r.id: r for r in __import__("pesuite.core", fromlist=["task_rows"]).task_rows(loaded)}
+        kids: dict[str, list] = {}
+        for r in rows.values():
+            if r.parent_id:
+                kids.setdefault(r.parent_id, []).append(r)
+        for pid, children in kids.items():
+            parent = rows[pid]
+            worst = max(children, key=lambda c: _STATUS_SEVERITY[c.status]).status
+            ok = parent.status == worst
+            if not ok:
+                bad += 1
+            mark = "PASS" if ok else "FAIL"
+            print(f"  [{mark}] {parent.name[:34]:34} = {parent.status.value} "
+                  f"(worst child = {worst.value})")
+    return bad
 
 
 if __name__ == "__main__":

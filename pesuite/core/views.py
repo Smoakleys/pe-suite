@@ -62,11 +62,30 @@ class PriorityItem:
     total_float: int
 
 
-def _status_for(
+# Severity order, worst (least on time) first. A parent shows the worst status among
+# its children — so a parent is COMPLETE only when every child is complete, and any
+# overdue child makes the whole branch read overdue.
+_STATUS_SEVERITY = {
+    TaskStatus.OVERDUE: 5,
+    TaskStatus.IN_PROGRESS: 4,
+    TaskStatus.DUE_SOON: 3,
+    TaskStatus.UPCOMING: 2,
+    TaskStatus.UNSCHEDULED: 1,
+    TaskStatus.COMPLETE: 0,
+}
+
+
+def _worst(statuses) -> TaskStatus:
+    """Return the least-on-time status (highest severity) from a sequence."""
+    return max(statuses, key=lambda s: _STATUS_SEVERITY.get(s, 0))
+
+
+def _leaf_status(
     loaded: LoadedProject,
     task_id: str,
     is_complete: bool,
 ) -> TaskStatus:
+    """Status of a single (leaf) task from its own schedule."""
     if is_complete:
         return TaskStatus.COMPLETE
 
@@ -101,6 +120,22 @@ def task_rows(loaded: LoadedProject) -> list[TaskRow]:
     for task in project.tasks:
         children.setdefault(task.parent_id, []).append(task)
 
+    # Resolve each task's status. A leaf uses its own schedule; a parent shows the
+    # worst (least on-time) status among its children, computed bottom-up.
+    by_id = {t.id: t for t in project.tasks}
+    status_cache: dict[str, TaskStatus] = {}
+
+    def status_of(task_id: str) -> TaskStatus:
+        if task_id in status_cache:
+            return status_cache[task_id]
+        kids = children.get(task_id, [])
+        if kids:  # parent: aggregate children (recurses through sub-parents)
+            result = _worst([status_of(k.id) for k in kids])
+        else:
+            result = _leaf_status(loaded, task_id, by_id[task_id].is_complete)
+        status_cache[task_id] = result
+        return result
+
     rows: list[TaskRow] = []
 
     def walk(parent_id: str | None, depth: int) -> None:
@@ -116,7 +151,7 @@ def task_rows(loaded: LoadedProject) -> list[TaskRow]:
                     is_parent=is_parent,
                     is_complete=task.is_complete,
                     is_critical=task.id in loaded.critical.critical_task_ids,
-                    status=_status_for(loaded, task.id, task.is_complete),
+                    status=status_of(task.id),
                     start=sched.computed_start if sched else None,
                     finish=sched.effective_finish if sched else None,
                     location=task.completion_location,
@@ -162,7 +197,7 @@ def priorities(loaded: LoadedProject, limit: int | None = None) -> list[Priority
         sched = loaded.schedule.get(task.id)
         start = sched.computed_start if sched else None
         finish = sched.effective_finish if sched else None
-        status = _status_for(loaded, task.id, task.is_complete)
+        status = _leaf_status(loaded, task.id, task.is_complete)
 
         days_overdue = max(0, (today - finish).days) if (finish and finish < today) else 0
         days_until_start = max(0, (start - today).days) if (start and start > today) else 0
