@@ -5,7 +5,9 @@ and material tracking in one place. Built to be expanded over time.
 
 **Adding a feature or a data source?** Start with **[ARCHITECTURE.md](ARCHITECTURE.md)** —
 the live contributor guide with copy-pasteable recipes. It must be updated with every
-change. See **[DESIGN.md](DESIGN.md)** for the original design rationale and phase plan.
+change. Adding a **web scraper** has its own small-context, step-by-step guide:
+**[docs/SCRAPER_PLAYBOOK.md](docs/SCRAPER_PLAYBOOK.md)**. See **[DESIGN.md](DESIGN.md)** for
+the original design rationale and phase plan.
 
 ## Layout
 

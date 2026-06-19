@@ -13,6 +13,11 @@ This document explains how PE Suite is put together and — more importantly —
 1. [Add a new pane / feature](#recipe-1-add-a-new-pane) — UI that shows project data.
 2. [Add a new fetched data source](#recipe-2-add-a-new-fetched-source) — Updates / Material.
 
+> **Adding a web scraper specifically?** The simplest path is a standalone script + one
+> `ScriptSource` line — no framework knowledge needed. That has its own self-contained,
+> small-context guide: **[docs/SCRAPER_PLAYBOOK.md](docs/SCRAPER_PLAYBOOK.md)**. Recipe 2
+> below is the general (class-based) version.
+
 If you only read one section, read the recipe you need. Everything above it is the
 "why" that makes the recipe safe.
 
@@ -86,7 +91,10 @@ pe-suite/
 │   ├── runner.py                 #   CLI entry point (the separate process)
 │   ├── paths.py                  #   hidden store + browser-profile locations
 │   └── sources/                  #   one file per source (see Recipe 2)
-│       └── __init__.py           #   register_all(): the ONE place sources are listed
+│       ├── __init__.py           #   register_all(): the ONE place sources are listed
+│       ├── script_source.py      #   ScriptSource: runs an external scraper, ingests JSON
+│       └── scripts/              #   standalone scraper scripts (SCRAPER_PLAYBOOK.md)
+├── docs/SCRAPER_PLAYBOOK.md      # small-context guide: add a scraper as a script
 └── scripts/                      # verify_*.py (run these after any change)
 ```
 
@@ -351,6 +359,7 @@ Recipe 1, your pane is full-screenable automatically.
 | `verify_editor.py` | Launch Editor boots Streamlit and targets the project |
 | `verify_fetch.py` | fetch pipeline: fetch→parse→store→diff + runner CLI |
 | `verify_ui_fetch.py` | Updates + Material panes render fetched data; refresh round-trip |
+| `verify_scraper.py` | ScriptSource: external scraper script → records, contract errors |
 | `build_demo_program.py` | (re)generates the large demo project via the engine |
 
 ---

@@ -15,13 +15,21 @@ from ..source import SourceRegistry
 
 def register_all(registry: SourceRegistry, include_network: bool = False,
                  include_playwright: bool = False) -> SourceRegistry:
-    # Real sources go here, e.g.:
-    #     from .acme_portal import AcmePortalSource
-    #     registry.register(AcmePortalSource())
+    # Real sources go here. The EASY way is a scraper script + a ScriptSource line
+    # (see docs/SCRAPER_PLAYBOOK.md):
+    #
+    #     from .script_source import ScriptSource
+    #     from datetime import timedelta
+    #     registry.register(ScriptSource(
+    #         id="acme_portal", name="Acme Portal", group="material",
+    #         script="acme_portal.py", refresh_after=timedelta(minutes=30)))
 
     if include_network:
-        from .web_example import ExampleWebSource
-        registry.register(ExampleWebSource())
+        # Worked example of the script-based path (real HTTP, no fabricated data).
+        from .script_source import ScriptSource
+        registry.register(ScriptSource(
+            id="example_com", name="Example.com (script demo)", group="updates",
+            script="example_com.py"))
 
     if include_playwright:
         from .playwright_example import ExamplePlaywrightSource, playwright_available
