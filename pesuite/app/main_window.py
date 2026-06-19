@@ -36,6 +36,7 @@ from PySide6.QtWidgets import (
 
 from pesuite import config
 from pesuite.app.editor_launcher import StreamlitEditor
+from pesuite.app.material_window import MaterialTrackingWindow
 from pesuite.app.state import AppState
 from pesuite.core import discover_projects
 from pesuite.fetch_client import FetchClient
@@ -71,6 +72,8 @@ class MainWindow(QMainWindow):
         # Maximize state: (pane, splitter, index) while a pane is popped out.
         self._maximized: tuple | None = None
         self._max_window: _MaximizedWindow | None = None
+        # Open Material Tracking windows, keyed by project id.
+        self._material_windows: dict[str, MaterialTrackingWindow] = {}
 
         # Services the panes depend on must exist before the panes are built.
         self._fetch = FetchClient(parent=self)
@@ -125,11 +128,12 @@ class MainWindow(QMainWindow):
     def _build_panes(self) -> QWidget:
         self.gantt_pane = GanttPane(self.state)
         self.priorities_pane = PrioritiesPane(self.state)
-        self.material_pane = MaterialPane(self._fetch)
+        self.material_pane = MaterialPane()
         self.tasks_pane = TasksPane(self.state)
         self.updates_pane = UpdatesPane(self._fetch)
 
         self.gantt_pane.launchEditorRequested.connect(self._on_launch_editor)
+        self.material_pane.openRequested.connect(self._open_material_window)
 
         # Right column: Priorities (top) over Material Tracking (bottom).
         self.right_split = QSplitter(Qt.Vertical)
@@ -268,6 +272,18 @@ class MainWindow(QMainWindow):
         self._rewatch_current_file()  # atomic save may have dropped the watch
 
     # -- actions ----------------------------------------------------------
+    def _open_material_window(self, project_id: str, project_name: str) -> None:
+        """Open (or focus) the Material Tracking window for one project."""
+        win = self._material_windows.get(project_id)
+        if win is None:
+            win = MaterialTrackingWindow(project_id, project_name, self._fetch, parent=self)
+            win.closed.connect(self._material_windows.pop)
+            win.setAttribute(Qt.WA_DeleteOnClose)
+            self._material_windows[project_id] = win
+        win.show()
+        win.raise_()
+        win.activateWindow()
+
     def _on_launch_editor(self) -> None:
         if self.state.current_path is None:
             self.statusBar().showMessage("Select a project first.", 4000)
@@ -277,6 +293,8 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event) -> None:
         if self._maximized is not None:
             self._restore_pane()
+        for win in list(self._material_windows.values()):
+            win.close()
         self._editor.shutdown()
         self._fetch.shutdown()
         super().closeEvent(event)

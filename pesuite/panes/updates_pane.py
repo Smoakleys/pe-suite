@@ -112,7 +112,7 @@ class UpdatesPane(Pane):
         self._list.setSelectionMode(QListWidget.NoSelection)
         self._list.setFocusPolicy(Qt.NoFocus)
         self.set_content(self._list)
-        self.show_placeholder("No updates yet — click Refresh to fetch.")
+        self.show_placeholder("No update sources connected yet.")
 
         self._project_filter.currentIndexChanged.connect(self._reload)
         self._source_filter.currentIndexChanged.connect(self._reload)
@@ -177,7 +177,10 @@ class UpdatesPane(Pane):
 
         self._list.clear()
         if not rows:
-            self.show_placeholder("No updates match these filters.")
+            if self._source_filter.count() <= 1:  # only the "All sources" entry
+                self.show_placeholder("No update sources connected yet.")
+            else:
+                self.show_placeholder("No updates match these filters.")
             return
         for up in rows:
             card = _UpdateCard(up, names.get(up.source_id, up.source_id))

@@ -24,6 +24,10 @@ class FetchClient(QObject):
     def __init__(self, parent: QObject | None = None, store_path=None) -> None:
         super().__init__(parent)
         self._store = Store(store_path or config.fetch_store_path())
+        # Self-heal: drop any cached data whose source no longer exists in the codebase
+        # (e.g. removed demo sources), so the panes never show orphaned/fabricated data.
+        from fetch_service.sources import all_known_source_ids
+        self._store.prune_to_sources(all_known_source_ids())
         self._procs: dict[QProcess, str] = {}
         self._shutting_down = False
 

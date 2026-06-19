@@ -1,8 +1,11 @@
 """Source registry assembly.
 
 `register_all` is the single place that decides which sources exist. Adding a source =
-importing it and registering it here (plus its own file). Network/browser sources are
-opt-in so default runs (and tests) stay deterministic and offline.
+writing its file (see ARCHITECTURE.md "Add a new fetched source") and registering it here.
+
+There are NO fabricated/demo sources. Until a real source is registered, the Updates and
+Material panes are honestly empty. The example HTTP and Playwright sources below do real
+I/O and are opt-in (kept out of the default set so a plain run makes no network calls).
 """
 
 from __future__ import annotations
@@ -12,10 +15,9 @@ from ..source import SourceRegistry
 
 def register_all(registry: SourceRegistry, include_network: bool = False,
                  include_playwright: bool = False) -> SourceRegistry:
-    from .demo import DemoMaterialSource, DemoUpdatesSource
-
-    registry.register(DemoUpdatesSource())
-    registry.register(DemoMaterialSource())
+    # Real sources go here, e.g.:
+    #     from .acme_portal import AcmePortalSource
+    #     registry.register(AcmePortalSource())
 
     if include_network:
         from .web_example import ExampleWebSource
@@ -27,3 +29,14 @@ def register_all(registry: SourceRegistry, include_network: bool = False,
             registry.register(ExamplePlaywrightSource())
 
     return registry
+
+
+def all_known_source_ids() -> set[str]:
+    """Every source id the app could ever register (used to prune stale store data).
+
+    Includes the opt-in example sources so their cached data survives, but excludes
+    anything that has been removed from the codebase — so deleting a source file makes
+    its old records self-prune on next startup.
+    """
+    reg = register_all(SourceRegistry(), include_network=True, include_playwright=True)
+    return {s.id for s in reg.all()}

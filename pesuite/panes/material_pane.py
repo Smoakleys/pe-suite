@@ -1,139 +1,102 @@
-"""Material Tracking pane: fetched material/PO status, with its OWN project selector.
+"""Material Tracking pane: a project picker that launches per-project windows.
 
-Lives below Priorities in the right column. Independent of the global selector — the
-user picks a project here. Reads are cache-first from the hidden store; the pane runs a
-view-driven refresh of just the "material" source group when it first appears, and the
-Refresh button forces one on demand.
+Lives below Priorities in the right column. It is NOT a data table — it shows one small
+box per project (from the same project JSON the derived panes use). Clicking a box opens
+Material Tracking for that project in its own window, where the fetched material data is
+shown. Independent of the global selector.
 """
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
-    QComboBox,
-    QHBoxLayout,
-    QHeaderView,
+    QGridLayout,
     QLabel,
-    QPushButton,
-    QTableWidget,
-    QTableWidgetItem,
+    QScrollArea,
+    QSizePolicy,
+    QToolButton,
     QWidget,
 )
 
 from pesuite.core import ProjectRef
-from pesuite.fetch_client import FetchClient
 from .base import Pane
 
-_COLUMNS = ["PO", "Item", "Status", "Qty", "ETA", "Supplier"]
-_STATUS_COLOR = {
-    "Delivered": "#2f9e54",
-    "In Transit": "#2f8f7d",
-    "Ordered": "#d98324",
-    "Delayed": "#d2453d",
-}
+_COLUMNS = 2  # project boxes per row
+
+
+class _ProjectBox(QToolButton):
+    """A small clickable card showing a project name."""
+
+    def __init__(self, ref: ProjectRef) -> None:
+        super().__init__()
+        self.ref = ref
+        self.setText(ref.name)
+        self.setCursor(Qt.PointingHandCursor)
+        self.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        self.setMinimumHeight(64)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setStyleSheet(
+            """
+            QToolButton {
+                background: #f4f7fb;
+                border: 1px solid #d6dbe6;
+                border-radius: 10px;
+                padding: 12px 14px;
+                font-size: 13px;
+                font-weight: 600;
+                color: #1b2230;
+                text-align: left;
+            }
+            QToolButton:hover { background: #eaf1fb; border-color: #2f6fb0; }
+            QToolButton:pressed { background: #dbe7f6; }
+            """
+        )
 
 
 class MaterialPane(Pane):
-    def __init__(self, fetch: FetchClient) -> None:
-        self._fetch = fetch
-        self._refreshed_once = False
+    # Emitted (project_id, project_name) when a project box is clicked.
+    openRequested = Signal(str, str)
 
-        extra = QWidget()
-        hl = QHBoxLayout(extra)
-        hl.setContentsMargins(0, 4, 0, 4)
-        hl.setSpacing(6)
-        self._selector = QComboBox()
-        self._selector.setMinimumWidth(180)
-        self._refresh_btn = QPushButton("Refresh")
-        self._refresh_btn.setObjectName("ghost")
-        hl.addWidget(QLabel("Project"))
-        hl.addWidget(self._selector)
-        hl.addWidget(self._refresh_btn)
+    def __init__(self) -> None:
+        super().__init__("Material Tracking")
+        self._refs: list[ProjectRef] = []
 
-        super().__init__("Material Tracking", header_extra=extra)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QScrollArea.NoFrame)
+        self._grid_host = QWidget()
+        self._grid = QGridLayout(self._grid_host)
+        self._grid.setContentsMargins(2, 2, 2, 2)
+        self._grid.setSpacing(10)
+        self._grid.setAlignment(Qt.AlignTop)
+        scroll.setWidget(self._grid_host)
+        self.set_content(scroll)
 
-        self._table = QTableWidget(0, len(_COLUMNS))
-        self._table.setHorizontalHeaderLabels(_COLUMNS)
-        self._table.verticalHeader().setVisible(False)
-        self._table.setEditTriggers(QTableWidget.NoEditTriggers)
-        self._table.setSelectionBehavior(QTableWidget.SelectRows)
-        self._table.setShowGrid(False)
-        self._table.setAlternatingRowColors(True)
-        self._table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.set_content(self._table)
-        self.show_placeholder("No material records yet — click Refresh to fetch.")
+        self.show_placeholder("No projects found.")
 
-        self._selector.currentIndexChanged.connect(self._on_project_changed)
-        self._refresh_btn.clicked.connect(self._do_refresh)
-        self._fetch.refreshStarted.connect(self._on_refresh_started)
-        self._fetch.refreshed.connect(self._on_refreshed)
-
-        self._reload()
-
-    # -- public ----------------------------------------------------------
     def set_projects(self, refs: list[ProjectRef]) -> None:
-        current = self._selector.currentData()
-        self._selector.blockSignals(True)
-        self._selector.clear()
-        for ref in refs:
-            self._selector.addItem(ref.name, userData=ref.id)
-        idx = self._selector.findData(current)
-        if idx >= 0:
-            self._selector.setCurrentIndex(idx)
-        self._selector.blockSignals(False)
+        self._refs = refs
+        # clear existing boxes
+        while self._grid.count():
+            item = self._grid.takeAt(0)
+            w = item.widget()
+            if w is not None:
+                w.deleteLater()
 
-    def _current_project_id(self) -> str | None:
-        return self._selector.currentData()
-
-    # -- lifecycle / refresh --------------------------------------------
-    def showEvent(self, event) -> None:
-        super().showEvent(event)
-        if not self._refreshed_once:
-            self._refreshed_once = True
-            self._do_refresh()
-
-    def _on_project_changed(self, _i: int) -> None:
-        self._reload()
-        self._do_refresh()
-
-    def _do_refresh(self) -> None:
-        self._fetch.refresh_group("material", project_id=self._current_project_id(), force=True)
-
-    def _on_refresh_started(self, group: str) -> None:
-        if group == "material":
-            self._refresh_btn.setEnabled(False)
-            self._refresh_btn.setText("Refreshing…")
-
-    def _on_refreshed(self, group: str, ok: bool) -> None:
-        if group != "material":
+        if not refs:
+            self.show_placeholder("No projects found.")
             return
-        self._refresh_btn.setEnabled(True)
-        self._refresh_btn.setText("Refresh")
-        self._reload()
 
-    def _reload(self) -> None:
-        records = self._fetch.materials(project_id=self._current_project_id())
-        self._table.setRowCount(0)
-        if not records:
-            self.show_placeholder("No material records for this project yet.")
-            return
-        for rec in records:
-            data = rec.get("data", {}) or {}
-            status = str(data.get("status", ""))
-            values = [
-                str(data.get("po", rec.get("rec_key", ""))),
-                rec.get("title", ""),
-                status,
-                str(data.get("qty", "")),
-                str(data.get("eta", "")),
-                str(data.get("supplier", "")),
-            ]
-            row = self._table.rowCount()
-            self._table.insertRow(row)
-            for col, val in enumerate(values):
-                item = QTableWidgetItem(val)
-                if col == 2 and status in _STATUS_COLOR:
-                    from PySide6.QtGui import QColor
-                    item.setForeground(QColor(_STATUS_COLOR[status]))
-                self._table.setItem(row, col, item)
+        hint = QLabel("Choose a project to open its Material Tracking window:")
+        hint.setStyleSheet("color: #74809a; font-size: 12px;")
+        hint.setWordWrap(True)
+        self._grid.addWidget(hint, 0, 0, 1, _COLUMNS)
+
+        for i, ref in enumerate(refs):
+            box = _ProjectBox(ref)
+            box.clicked.connect(lambda _=False, r=ref: self.openRequested.emit(r.id, r.name))
+            row = 1 + i // _COLUMNS
+            col = i % _COLUMNS
+            self._grid.addWidget(box, row, col)
+
         self.show_content()

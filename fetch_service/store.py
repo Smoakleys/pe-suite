@@ -110,6 +110,25 @@ class Store:
     def close(self) -> None:
         self._con.close()
 
+    def prune_to_sources(self, known_ids) -> int:
+        """Delete all data whose source is not in `known_ids`.
+
+        Makes the store self-healing: when a source is removed from the codebase, its
+        stale records / raw snapshots / update-feed rows disappear on the next startup,
+        so no fabricated or orphaned data ever lingers. Returns rows removed.
+        """
+        known = set(known_ids)
+        removed = 0
+        for table in ("records", "raw_snapshots", "updates", "sources"):
+            id_col = "id" if table == "sources" else "source_id"
+            existing = {r[0] for r in self._con.execute(f"SELECT {id_col} FROM {table}")}
+            stale = existing - known
+            for sid in stale:
+                cur = self._con.execute(f"DELETE FROM {table} WHERE {id_col}=?", (sid,))
+                removed += cur.rowcount
+        self._con.commit()
+        return removed
+
     # -- writes (runner side) -------------------------------------------
     def ensure_source(self, source_id: str, name: str, group: str) -> None:
         self._con.execute(

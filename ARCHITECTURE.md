@@ -69,12 +69,14 @@ pe-suite/
 │   │   ├── main_window.py        #   top bar, pane grid, global selector, maximize
 │   │   ├── state.py              #   AppState: the selected-project hub (signals)
 │   │   ├── theme.py              #   ALL colors + the QSS stylesheet
-│   │   └── editor_launcher.py    #   StreamlitEditor (Launch Editor)
+│   │   ├── editor_launcher.py    #   StreamlitEditor (Launch Editor)
+│   │   └── material_window.py    #   per-project Material Tracking window (own window)
 │   ├── panes/                    # one file per pane (see Recipe 1)
 │   │   ├── base.py               #   Pane card: header, body, maximize button
 │   │   ├── gantt_pane.py, gantt_chart.py
 │   │   ├── tasks_pane.py, priorities_pane.py
-│   │   └── updates_pane.py, material_pane.py
+│   │   ├── updates_pane.py       #   the cross-source change feed (own filters)
+│   │   └── material_pane.py      #   project picker (boxes) -> launches material_window
 │   └── fetch_client/             # FetchClient: cache-first reads + out-of-proc refresh
 ├── fetch_service/                # the fetch process (NO Qt, NO pesuite imports)
 │   ├── source.py                 #   Source contract + SourceRegistry
@@ -106,13 +108,16 @@ pe-suite/
 ```
 
 `AppState` is the hub. Panes **listen** to `projectChanged`; they never load projects
-themselves. The global selector drives **Gantt + Tasks + Priorities**. (Updates and
-Material have their *own* selectors and are driven by the FetchClient instead.)
+themselves. The global selector drives **Gantt + Tasks + Priorities**. The Updates pane
+has its own filters; the **Material pane is a project picker (boxes)** that launches a
+per-project Material Tracking *window* — both driven by the FetchClient, not the global
+selector. The project list everywhere comes from the same project JSON the derived panes
+use (`discover_projects`).
 
 ## 4. How fetched data flows (fetched side)
 
 ```
- pane (Updates / Material)
+ Updates pane  /  Material Tracking window
       │  refresh_group("updates" | "material", project_id)
       ▼
  FetchClient ──spawns──► python -m fetch_service.runner --group ...   (separate process)
@@ -123,11 +128,16 @@ Material have their *own* selectors and are driven by the FetchClient instead.)
       │                       Store.upsert_records(): diff -> new/changed/removed feed
       │  refreshed(group, ok)            │
       ▼                                  ▼
- pane._reload()  ◄──cache-first reads──  hidden SQLite store (%LOCALAPPDATA%\PESuite)
+ reload()  ◄────────cache-first reads──  hidden SQLite store (%LOCALAPPDATA%\PESuite)
 ```
 
-**Cache-first:** panes render instantly from the store, then refresh the viewed group in
+**Cache-first:** views render instantly from the store, then refresh the viewed group in
 the background and re-read. Nothing scrapes unless it's being looked at or force-refreshed.
+
+**No fabricated data:** the app registers **no demo sources**. On startup `FetchClient`
+calls `Store.prune_to_sources(all_known_source_ids())`, so any cached rows whose source no
+longer exists are removed — the panes can only ever show data from a real, registered
+source.
 
 ---
 
@@ -255,7 +265,11 @@ class AcmePortalSource(BaseSource):
 stable (PO number, ticket id, URL).
 
 For Material rows, put structured fields in `data` (`status`, `qty`, `eta`, `supplier`,
-`po`) — the Material pane reads those column keys.
+`po`) — the Material Tracking window reads those column keys.
+
+> **No fabricated data, ever.** The app ships with **zero demo sources**. Until you
+> register a real source, Updates and the Material window are honestly empty. Don't add a
+> source that invents data.
 
 ### Step 2 — register it (the ONLY wiring step)
 
@@ -263,19 +277,21 @@ In `fetch_service/sources/__init__.py → register_all()`:
 
 ```python
 def register_all(registry, include_network=False, include_playwright=False):
-    from .demo import DemoMaterialSource, DemoUpdatesSource
-    registry.register(DemoUpdatesSource())
-    registry.register(DemoMaterialSource())
-
+    # Real sources go here:
     from .acme_portal import AcmePortalSource      # <-- add
     registry.register(AcmePortalSource())          # <-- add
+
+    if include_network:
+        from .web_example import ExampleWebSource
+        registry.register(ExampleWebSource())
     ...
     return registry
 ```
 
 That's the whole integration. **No pane changes. No store changes. No UI changes.** The
-Updates/Material panes already iterate `Record`s and show a source filter, so your source
-appears automatically.
+Updates pane and Material window already iterate `Record`s, so your source appears
+automatically. (Removing a source later is just as clean: delete its file + this line, and
+its cached rows **self-prune** on next startup via `Store.prune_to_sources`.)
 
 ### Step 3 — try it out of process
 
@@ -311,7 +327,7 @@ the `Source` shape do not change.
 | Service | Where | Contract |
 |---|---|---|
 | `AppState` | `app/state.py` | `projectChanged(LoadedProject|None)`, `open_project()`, `reload()`. The single source of truth for the selected project. |
-| `FetchClient` | `fetch_client/client.py` | reads: `updates()`, `materials()`, `source_names()`; refresh: `refresh_group(group, project_id, force)`; signals: `refreshStarted(group)`, `refreshed(group, ok)`. |
+| `FetchClient` | `fetch_client/client.py` | reads: `updates()`, `materials()`, `source_names()`; refresh: `refresh_group(group, project_id, force)`; signals: `refreshStarted(group)`, `refreshed(group, ok)`. Self-heals on init: prunes store data from unknown sources. |
 | `StreamlitEditor` | `app/editor_launcher.py` | `launch(project_path)` → opens the editor in the browser; managed subprocess. |
 | `Pane` | `panes/base.py` | `set_content()`, `show_placeholder()`, `show_content()`, `maximizeRequested`, `set_maximized()`. |
 | `config` | `pesuite/config.py` | **all** on-disk paths: `projects_dir()`, `streamlit_script()`, `fetch_store_path()`, `browser_profile_dir()`, `app_data_dir()`. Add new locations here, nowhere else. |

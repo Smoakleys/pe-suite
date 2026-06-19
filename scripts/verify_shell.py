@@ -79,8 +79,12 @@ def main() -> int:
     app.processEvents()
     check("reload() re-derived the project", state.current is not None and state.current is not before)
 
-    # Material Tracking is now an embedded pane in the right column with its own selector.
-    check("Material pane present with own selector", win.material_pane._selector.count() >= 2)
+    # Material Tracking pane is a project picker (boxes); launching opens a window.
+    check("Material pane shows project boxes", win.material_pane._grid.count() >= 2)
+    win._open_material_window("DEMO-NPDE", "NPDE Demo")
+    app.processEvents()
+    check("clicking a project opens a Material window",
+          "DEMO-NPDE" in win._material_windows)
 
     # Every pane can be maximized to its own window and restored.
     win.selector.setCurrentIndex(target)
